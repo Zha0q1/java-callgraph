@@ -48,6 +48,8 @@ public class JCallGraph {
 
     public static void main(String[] args) {
 
+        
+
         Function<ClassParser, ClassVisitor> getClassVisitor =
                 (ClassParser cp) -> {
                     try {
@@ -58,35 +60,74 @@ public class JCallGraph {
                 };
 
         try {
-            for (String arg : args) {
-
-                File f = new File(arg);
-
-                if (!f.exists()) {
-                    System.err.println("Jar file " + arg + " does not exist");
+            if (args[0].equals("-d")) {
+                File folder = new File(args[1]);
+                if (!folder.exists()) {
+                    System.err.println("Invalid directory");
                 }
+                for (File f : folder.listFiles()) {
+                    System.out.println("processing: " + f.getAbsolutePath());
+                    if (f.isFile() && f.getName().endsWith(".jar")) {
+                        System.out.println("processing: " + f.getAbsolutePath());
+                        try (JarFile jar = new JarFile(f)) {
+                            Stream<JarEntry> entries = enumerationAsStream(jar.entries());
+                            String methodCalls = entries.
+                                    flatMap(e -> {
+                                        if (e.isDirectory() || !e.getName().endsWith(".class"))
+                                            return (new ArrayList<String>()).stream();
 
-                try (JarFile jar = new JarFile(f)) {
-                    Stream<JarEntry> entries = enumerationAsStream(jar.entries());
-
-                    String methodCalls = entries.
-                            flatMap(e -> {
-                                if (e.isDirectory() || !e.getName().endsWith(".class"))
-                                    return (new ArrayList<String>()).stream();
-
-                                ClassParser cp = new ClassParser(arg, e.getName());
-                                return getClassVisitor.apply(cp).start().methodCalls().stream();
-                            }).
-                            map(s -> s + "\n").
-                            reduce(new StringBuilder(),
-                                    StringBuilder::append,
-                                    StringBuilder::append).toString();
-
-                    BufferedWriter log = new BufferedWriter(new OutputStreamWriter(System.out));
-                    log.write(methodCalls);
-                    log.close();
+                                        ClassParser cp = new ClassParser(f.getAbsolutePath(), e.getName());
+                                        return getClassVisitor.apply(cp).start().methodCalls().stream();
+                                    }).
+                                    map(s -> s + "\n").
+                                    reduce(new StringBuilder(),
+                                            StringBuilder::append,
+                                            StringBuilder::append).toString();
+                            
+                            // this logs the functions calls
+                            BufferedWriter log = new BufferedWriter(new OutputStreamWriter(System.out));
+                            log.write(methodCalls);
+                            // log.close();
+                        }
+                    }
                 }
             }
+            else {
+                for (String arg : args) {
+
+                    System.out.println("processing: " + arg);
+
+                    File f = new File(arg);
+    
+                    if (!f.exists()) {
+                        System.err.println("Jar file " + arg + " does not exist");
+                    }
+    
+                    try (JarFile jar = new JarFile(f)) {
+                        Stream<JarEntry> entries = enumerationAsStream(jar.entries());
+    
+                        String methodCalls = entries.
+                                flatMap(e -> {
+                                    if (e.isDirectory() || !e.getName().endsWith(".class"))
+                                        return (new ArrayList<String>()).stream();
+    
+                                    ClassParser cp = new ClassParser(arg, e.getName());
+                                    return getClassVisitor.apply(cp).start().methodCalls().stream();
+                                }).
+                                map(s -> s + "\n").
+                                reduce(new StringBuilder(),
+                                        StringBuilder::append,
+                                        StringBuilder::append).toString();
+    
+                        BufferedWriter log = new BufferedWriter(new OutputStreamWriter(System.out));
+                        log.write(methodCalls);
+                        log.close();
+                    }
+                }
+            }
+            
+
+            
         } catch (IOException e) {
             System.err.println("Error while processing jar: " + e.getMessage());
             e.printStackTrace();
