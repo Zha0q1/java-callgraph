@@ -66,7 +66,7 @@ public class JCallGraph {
                     System.err.println("Invalid directory");
                 }
                 for (File f : folder.listFiles()) {
-                    System.out.println("processing: " + f.getAbsolutePath());
+                    // System.out.println("processing: " + f.getAbsolutePath());
                     if (f.isFile() && f.getName().endsWith(".jar")) {
                         System.out.println("processing: " + f.getAbsolutePath());
                         try (JarFile jar = new JarFile(f)) {
@@ -85,8 +85,10 @@ public class JCallGraph {
                                             StringBuilder::append).toString();
                             
                             // this logs the functions calls
-                            BufferedWriter log = new BufferedWriter(new OutputStreamWriter(System.out));
-                            log.write(methodCalls);
+                            // BufferedWriter log = new BufferedWriter(new OutputStreamWriter(System.out));
+                            // log.write(methodCalls);
+                            System.out.print(methodCalls);
+                            System.out.flush();
                             // log.close();
                         }
                     }
@@ -95,7 +97,7 @@ public class JCallGraph {
             else {
                 for (String arg : args) {
 
-                    System.out.println("processing: " + arg);
+                    // System.out.println("processing: " + arg);
 
                     File f = new File(arg);
     

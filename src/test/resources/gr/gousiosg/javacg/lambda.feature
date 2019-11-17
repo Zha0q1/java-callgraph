@@ -28,12 +28,12 @@ Feature: Lambda
     # Creation of r in methodA
     Then the result should contain:
       """
-      M:LambdaTest:methodA() (D)Runner:run(LambdaTest)
+      M:LambdaTest:methodA()*(D)*Runner:run(LambdaTest)
       """
     # Call of methodB in r
     And the result should contain:
       """
-      M:LambdaTest:lambda$methodA$0() (M)LambdaTest:methodB()
+      M:LambdaTest:lambda$methodA$0()*(M)*LambdaTest:methodB()
       """
 
   Scenario: Retrieve nested lambdas
@@ -58,20 +58,20 @@ Feature: Lambda
     # Creation of r in methodA
     Then the result should contain:
       """
-      M:NestedLambdaTest:methodA() (D)Runner:run(NestedLambdaTest)
+      M:NestedLambdaTest:methodA()*(D)*Runner:run(NestedLambdaTest)
       """
     # Creation of r2 in r
     And the result should contain:
       """
-      M:NestedLambdaTest:lambda$methodA$2() (D)Runner:run(NestedLambdaTest)
+      M:NestedLambdaTest:lambda$methodA$2()*(D)*Runner:run(NestedLambdaTest)
       """
     # Creation of r3 in r2
     And the result should contain:
       """
-      M:NestedLambdaTest:lambda$lambda$methodA$2$1() (D)Runner:run(NestedLambdaTest)
+      M:NestedLambdaTest:lambda$lambda$methodA$2$1()*(D)*Runner:run(NestedLambdaTest)
       """
     # Call of methodB in r3
     And the result should contain:
       """
-      M:NestedLambdaTest:lambda$lambda$lambda$methodA$2$1$0() (M)NestedLambdaTest:methodB()
+      M:NestedLambdaTest:lambda$lambda$lambda$methodA$2$1$0()*(M)*NestedLambdaTest:methodB()
       """

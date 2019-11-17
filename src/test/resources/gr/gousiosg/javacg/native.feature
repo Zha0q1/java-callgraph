@@ -16,5 +16,5 @@ Feature: Native
     When I run the analyze
     Then the result should contain:
       """
-      M:NativeTest:methodA() (M)NativeTest:methodB()
+      M:NativeTest:methodA()*(M)*NativeTest:methodB()
       """

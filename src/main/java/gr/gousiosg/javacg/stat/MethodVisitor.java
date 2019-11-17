@@ -53,9 +53,10 @@ public class MethodVisitor extends EmptyVisitor {
         visitedClass = jc;
         mg = m;
         cp = mg.getConstantPool();
-        System.out.println("contains:" + visitedClass.getClassName() + " " + mg.getName() + "(" + argumentList(mg.getArgumentTypes()) + ")");
+        System.out.println("contains:" + visitedClass.getClassName() + "*" + visitedClass.getClassName() + ":" + mg.getName() + "(" + argumentList(mg.getArgumentTypes()) + ")");
+        System.out.flush();
         format = "M:" + visitedClass.getClassName() + ":" + mg.getName() + "(" + argumentList(mg.getArgumentTypes()) + ")"
-            + " " + "(%s)%s:%s(%s)";
+            + "*" + "(%s)*%s:%s(%s)";
     }
 
     private String argumentList(Type[] arguments) {
